@@ -1,0 +1,106 @@
+dynamic_obstacles:
+  enabled: true
+  count: 20
+
+  # Obstacle geometry:
+  #   cylinder - the abstraction the DPCBF maths assumes.
+  #   human    - a standing pedestrian (capsules + ellipsoids, 14 geoms), the
+  #              shape this pipeline actually has to handle. Sizes come from the
+  #              `human` block below; `radius_range`, `rgba` and `height` apply
+  #              to cylinders only. The radius handed to DPCBF becomes the
+  #              circumscribed radius of the body (~0.151 * standing height,
+  #              i.e. 0.26 m at 1.75 m), so tracking accuracy is measured
+  #              against the widest point, not the torso.
+  shape: cylinder
+
+  # A radius and a constant speed are sampled once per obstacle at startup.
+  radius_range: [0.2, 0.3]         # meters (cylinder only)
+  speed_range: [0.0, 0.8]          # meters/second
+  collision_enabled: true          # physical contact between robot and obstacles
+  rgba: [0.1, 0.4, 1.0, 0.45]      # translucent blue (cylinder only)
+  height: 1.5                      # meters (cylinder height; also arena wall height)
+  random_seed: 42                  # same value reproduces the same obstacle set
+
+  human:
+    # Final standing height in meters, sampled once per person. This uniformly
+    # scales x/y/z part positions, capsule endpoints, radii and semi-axes—not
+    # only the vertical height—so the complete connected body keeps its shape.
+    height_range: [1.40, 1.80]
+    rgba: [0.85, 0.55, 0.40, 1.0]
+    # Yaw follows the walking direction (and turns on a wall bounce). Matters
+    # because a person is ~0.50 m across the shoulders but only ~0.24 m deep,
+    # so the fitted circle changes with aspect angle. Set false to freeze the
+    # random spawn heading instead.
+    face_travel_direction: true
+
+  arena:
+    size: [10.0, 10.0]             # width (x), depth (y), meters
+    # G1 starts at (0, 0). With this center, the arena spans x=[1, 11]
+    # and y=[-5, 5], so the robot starts 1 m outside the left boundary.
+    center: [0.0, 0.0]
+    show_boundary: false
+    boundary_thickness: 0.04       # meters; visual only
+    boundary_rgba: [0.2, 0.7, 1.0, 0.12]
+
+robot:
+  base_body: pelvis                # floating-base body used for MuJoCo ground truth
+  k_mu: 1                          # 1
+  k_lambda: 0.5                    # 0.5
+  r_rob: 0.30                      # meters
+  p_max: 5.0                       # obstacle detection radius, meters
+
+  # These match the velocity-command ranges used to train the selected policy.
+  v_s_max: 2.0
+  v_s_min: -1.0
+  v_l_max: 1.0
+  v_l_min: -1.0
+  w_max: 1.0
+  w_min: -1.0
+
+  a_s_max: 4.0
+  a_s_min: -2.0
+  a_l_max: 2.0
+  a_l_min: -2.0
+  s: 1.05                          # safety factor; must be greater than 1
+  eps_v: 0.05
+  eps_d: 0.05
+
+qp_parameters:
+  enabled: true
+  # Navigation commands are generated inside g1_ctrl.  Keep the legacy
+  # simulator-side joystick QP available, but bypass it while Navigation is
+  # evaluated so two independent filters are never stacked.
+  simulate_filter_enabled: false
+
+  k_a_s: 1.0
+  k_a_l: 1.0
+  # a_s/a_l are normalized at 500 Hz. Applied delta-v is multiplied by
+  # reference_control_frequency_hz * actual control_dt.
+  reference_control_frequency_hz: 500.0
+  alpha: 2.0       # 2.0
+  default_num_constraints: 10
+  # 0: nearest distance first
+  # 1: highest relative-velocity closing alignment first, distance as tie-break
+  obstacle_priority: 1
+
+  # exponential CBF (eCBF) parameters for distance between robot and obstacles
+  ecbf_enabled: false
+  alpha_ecbf: 100.0
+  # Optimal-Decay CBF (ODCBF) parameters
+  odcbf_enabled: false
+  decay_weight: 1000000
+  # Slack parameters
+  slack_enabled: true
+  slack_weight: 1000000
+
+visualization:
+  enabled: false
+  window_name: "DPCBF Top-Down and Velocity Boundaries"
+  window_width: 1500
+  window_height: 900
+  refresh_hz: 30.0
+  velocity_axis_limit: 3.0            # +/- m/s in each LoS velocity card
+  velocity_arrow_seconds: 1.0         # world-arrow length = relative velocity * this value
+  world_parabola_lateral_limit: 1.0   # +/- LoS lateral velocity shown on the world pane
+  world_parabola_backward_limit: 1.5  # maximum -LoS velocity extent on the world pane
+  world_margin: 1.0                   # meters around arena and p_max circle

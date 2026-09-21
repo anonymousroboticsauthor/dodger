@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Build products
+**/build/
+**/build_*/
+**/install/
+**/log/
+**/logs/
+**/wandb/
+
+# Editors and local environments
+.idea/
+.vscode/
+.venv/
+.env
+
+# Runtime output
+MUJOCO_LOG.TXT
+*.db3
+*.mcap
+*.bag
+core
+core.*
+

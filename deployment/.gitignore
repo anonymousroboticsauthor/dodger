@@ -1,0 +1,27 @@
+*.egg-info
+__pycache__/
+*.py[cod]
+.pytest_cache
+.idea
+outputs
+logs
+log/
+deploy/robots/*/log/
+wandb
+MUJOCO_LOG.TXT
+deploy/robots/go2/build
+deploy/robots/g1/build
+deploy/robots/h1_2/build
+deploy/robots/g1_23dof/build
+deploy/robots/r1/build
+deploy/robots/a2/build
+src/assets/motions/g1/dance1_subject2.npz
+simulate/build
+simulate/build_ros2
+# colcon run from the REPO ROOT instead of ros2/ drops these here. ros2/
+# has its own rule; without one at this level they get staged, and a stray
+# root install/ is worse than clutter — sourcing it by mistake gives an
+# empty overlay and the "built it but the package is missing" symptom.
+/build/
+/install/
+/log/
