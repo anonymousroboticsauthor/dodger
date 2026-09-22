@@ -8,7 +8,8 @@ for goal-directed robot navigation among multiple dynamic obstacles.
 
 The high-level navigation policy is trained with MuJoCo Playground. Training
 code, environment configuration, and policy-export instructions are located in
-the [training README](training/README.md).
+[`training/`](training/). See the [training README](training/README.md) for
+details.
 
 ## Deployment
 
