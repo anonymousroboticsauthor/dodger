@@ -1,0 +1,13 @@
+name: dodger-training
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - ffmpeg
+  - pip:
+      - -e .[cuda,learning,dev]
+      - jax[cuda12]==0.6.2
+      - mujoco==3.6.0
+      - mujoco-mjx==3.6.0
+      - onnx
