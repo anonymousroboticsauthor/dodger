@@ -24,6 +24,9 @@ goal interface.
 
 ## License
 
-See [`deployment/LICENCE`](deployment/LICENCE) and the license files included
-with individual third-party components. Training dependencies and code retain
-their respective upstream licenses.
+This repository is licensed under the Apache License 2.0. See
+[`LICENSE`](LICENSE). The training and deployment components retain their
+respective upstream licenses and notices; see
+[`training/LICENSE`](training/LICENSE) and
+[`deployment/LICENCE`](deployment/LICENCE), as well as the license files
+included with individual third-party components.
